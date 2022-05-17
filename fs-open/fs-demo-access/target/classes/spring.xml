@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="locations">
+            <list>
+                <value>classpath:common.properties</value>
+                <value>classpath:dubbo.properties</value>
+            </list>
+        </property>
+    </bean>
+
+    <context:annotation-config />
+    <context:component-scan base-package="com.facishare.wechat"/>
+
+    <bean id="redisTemplate" class="com.facishare.open.common.storage.redis.RedisTemplate">
+        <property name="hosts" value="${fs.open.redis.url}"></property>
+        <property name="password" value="${fs.open.redis.password}"></property>
+        <property name="masterName" value="${fs.open.redis.mastername}"></property>
+    </bean>
+
+    <bean name="propertiesUtil" class="com.facishare.wechat.access.utils.PropertiesUtil">
+        <property name="fcpServerPort" value="${FS.PAY.CLIENT.FCP.SERVER.PORT}" />
+        <property name="fcpServerIp" value="${FS.PAY.CLIENT.FCP.SERVER.IP}" />
+    </bean>
+    <bean name="fcpClientHelper" class="com.facishare.wechat.access.utils.FcpClientHelper" >
+        <constructor-arg name="propertiesUtil" ref="propertiesUtil"/>
+    </bean>
+    <import resource="provider.xml"/>
+    <import resource="consumer.xml"/>
+    <import resource="dubbo-config.xml"/>
+
+    <bean id="fcpClient2" class="com.facishare.fcp.client.FcpClient">
+        <constructor-arg index="0" value="${fcp.account.host}"/>
+        <constructor-arg index="1" value="${fcp.account.port}"/>
+    </bean>
+
+
+</beans>

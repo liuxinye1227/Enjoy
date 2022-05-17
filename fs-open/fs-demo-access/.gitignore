@@ -1,0 +1,7 @@
+*.iml
+*/target/*
+.idea/
+*/logs/*
+logs/*
+# Mac-specific directory that no other operating system needs.
+.DS_Store

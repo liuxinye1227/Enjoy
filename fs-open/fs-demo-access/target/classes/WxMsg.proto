@@ -1,0 +1,90 @@
+message Message {
+    //包头110:登录,111:普通消息,112:心跳,113:通讯录
+    enum HeadType {
+        LOGIN = 110;
+        CHAT = 111;
+        HEARTBEAT = 112;
+        ADDRESS_BOOK = 113;
+    }
+	optional string pid = 1;
+	required HeadType header = 2;
+	optional LoginReq login_req = 3;				    // 登录请求
+	optional LoginRsp login_rsp = 4;					// 登录返回
+	repeated AddressBookRsp address_book_rsp = 5;		// 通讯录返回
+	optional ChatMessage chat_msg = 6;					// 聊天消息
+	enum MsgCode {
+		SUCCESS = 0x80;									//成功
+		LOGIN_FAIL = 0x81;								//登录失败
+	}
+	optional MsgCode msgCode = 7;
+
+}
+
+
+message LoginReq{
+	required string ea = 1;           	   // 企业id
+
+	required string user_name = 2;         // 用户id
+
+	optional string platform = 3;          // 客户端平台:android,ios,web
+
+	optional string app_version = 4;       // APP版本号
+
+	optional string pwd = 5;
+}
+
+message LoginRsp{
+	required string ea = 1;           	   // 企业id
+
+	required string user_id = 2;           // 用户id
+
+	required string token = 3;             // 用户token
+
+	required string nick_name = 4;
+
+	required string header_url = 5;
+
+	required string phone = 6;
+}
+
+message AddressBookRsp{
+    required string user_id = 1;
+
+    required string user_name = 2;
+
+	required string nick_name = 3;
+
+    optional string header_url = 4;
+
+	optional bytes header_data = 5;
+
+    optional string phone = 6;
+}
+
+message ChatMessage {
+	optional string sid = 1;
+
+	required string from = 2;
+
+	required string to = 3;
+
+	required string msg = 4;
+
+
+	enum ChatType {
+		TEXT = 1;
+		IMG = 2;
+		AUDIO = 3;
+		FILE = 4;
+	}
+
+	required ChatType chat_type = 5[default = TEXT];
+
+    required string time = 6;
+
+	optional string file_url = 7;
+
+	optional bytes file_data = 8;
+
+	optional string file_id = 9;
+}

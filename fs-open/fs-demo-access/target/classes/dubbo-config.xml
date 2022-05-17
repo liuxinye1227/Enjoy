@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://code.alibabatech.com/schema/dubbo
+       http://code.alibabatech.com/schema/dubbo/dubbo.xsd
+       ">
+    <description>dubbo server端配置</description>
+
+    <!-- Application name -->
+    <dubbo:application id="msgApplication"
+                       name="${msg.dubbo.application.name}"
+                       owner="${msg.dubbo.application.owner}"
+                       organization="${msg.dubbo.application.organization}"
+                       logger="slf4j"
+                       compiler="javassist"/>
+
+    <!--监控中心
+    <dubbo:monitor protocol="registry" address="${msg.dubbo.registry.address}"/>
+-->
+
+    <!-- 服务端配置  -->
+    <!--协议-->
+    <dubbo:protocol id="msgProtocol"
+                    name="${msg.dubbo.protocol.name}"
+                    dispatcher="${msg.dubbo.protocol.dispatcher}"
+                    threadpool="${msg.dubbo.protocol.threadpool}"
+                    threads="${msg.dubbo.protocol.threads}">
+    </dubbo:protocol>
+
+    <!--注册中心, 在本地开发环境请采用直连方式，可把 register, subscribe 都配置为false-->
+    <!-- group="${msg.dubbo.registry.group}" -->
+    <dubbo:registry id="msgRegistry"
+                    protocol="${msg.dubbo.registry.name}"
+                    address="${msg.dubbo.registry.address}"
+                    client="${msg.dubbo.registry.client}"
+                    session="60000"
+                    register="true"
+                    subscribe="true"
+                    check="false" file="msg-registry-cache.properties">
+    </dubbo:registry>
+    <!--服务-->
+    <dubbo:provider id="msgProvider"
+                    application="msgApplication"
+                    registry="msgRegistry"
+                    protocol="msgProtocol"
+                    port="${msg.dubbo.provider.port}"
+                    cluster="${msg.dubbo.provider.cluster}"
+                    loadbalance="${msg.dubbo.provider.loadbalance}"
+                    serialization="${msg.dubbo.provider.serialization}"
+                    retries="${msg.dubbo.provider.retries}"
+                    timeout="${msg.dubbo.provider.timeout}"
+                    proxy="javassist"
+                    delay="-1"
+                    >
+    </dubbo:provider>
+    
+    <!-- 客户端   配置  -->
+    <dubbo:registry id="msgClientRegistry"  
+                    protocol="${msg.dubbo.registry.name}"
+                    address="${msg.dubbo.registry.address}"                   
+                    check="false" >
+    </dubbo:registry>
+    <dubbo:consumer id="msgConsumer"
+                    registry="msgClientRegistry"
+                    init="false"
+                    check="${msg.dubbo.consumer.check}"
+                    timeout="${msg.dubbo.consumer.timeout}"
+                    retries="${msg.dubbo.consumer.retries}" />
+</beans>
