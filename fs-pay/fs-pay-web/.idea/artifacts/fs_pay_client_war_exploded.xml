@@ -1,0 +1,16 @@
+<component name="ArtifactManager">
+  <artifact type="exploded-war" name="fs-pay-client:war exploded">
+    <output-path>$PROJECT_DIR$/fs-pay-client/target/fs-pay-client</output-path>
+    <root id="root">
+      <element id="directory" name="WEB-INF">
+        <element id="directory" name="classes">
+          <element id="module-output" name="fs-pay-client" />
+        </element>
+      </element>
+      <element id="directory" name="META-INF">
+        <element id="file-copy" path="D:\code\git\szdc\fs-pay\fs-pay-web\fs-pay-client\target/MANIFEST.MF" />
+      </element>
+      <element id="javaee-facet-resources" facet="fs-pay-client/web/Web" />
+    </root>
+  </artifact>
+</component>

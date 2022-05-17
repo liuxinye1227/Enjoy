@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/fs-pay-client/fs-pay-client.iml" filepath="$PROJECT_DIR$/fs-pay-client/fs-pay-client.iml" />
+      <module fileurl="file://$PROJECT_DIR$/fs-pay-web.iml" filepath="$PROJECT_DIR$/fs-pay-web.iml" />
+    </modules>
+  </component>
+</project>

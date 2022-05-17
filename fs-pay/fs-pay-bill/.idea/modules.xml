@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/fs-pay-bill.iml" filepath="$PROJECT_DIR$/fs-pay-bill.iml" />
+      <module fileurl="file://$PROJECT_DIR$/fs-pay-bill-api/fs-pay-bill-api.iml" filepath="$PROJECT_DIR$/fs-pay-bill-api/fs-pay-bill-api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/fs-pay-bill-provider/fs-pay-bill-provider.iml" filepath="$PROJECT_DIR$/fs-pay-bill-provider/fs-pay-bill-provider.iml" />
+    </modules>
+  </component>
+</project>

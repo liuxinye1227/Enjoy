@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.facishare.pay.business.dao.impl.AlarmLogDaoImpl">
+    
+    <resultMap id="BaseResultMap" type="alarmLogDo">
+        <id property="id" column="id" />
+        <result property="orderNo" column="order_no" />
+        <result property="type" column="type" />
+        <result property="transType" column="trans_type" />
+        <result property="errorMsg" column="error_msg" />
+        <result property="requestInfo" column="request_info" />
+        <result property="createTime" column="create_time" />
+        <result property="status" column="status" />
+        <result property="updateTime" column="update_time" />
+    </resultMap>
+    
+    <sql id="All_Column">
+        id,
+        order_no,
+        type,
+        trans_type,
+        error_msg,
+        request_info,
+        create_time,
+        status,
+        update_time
+
+    </sql>
+    
+    <!-- 添加操作日志 -->
+    <insert id="addAlarmLog" parameterType="alarmLogDo">
+
+        INSERT INTO alarm_log(
+            order_no,
+            type,
+            trans_type,
+            error_msg,
+            request_info,
+            create_time,
+            status)
+        VALUES (
+                #{orderNo},
+                #{type},
+                #{transType},
+                #{errorMsg},
+                #{requestInfo},
+                #{createTime},
+                #{status}
+            )
+    </insert>
+
+    <update id="updateAlarmLog" parameterType="map" >
+        update alarm_log set update_time=#{updateTime}, status=#{status}
+        WHERE id =#{id}
+    </update>
+
+</mapper>

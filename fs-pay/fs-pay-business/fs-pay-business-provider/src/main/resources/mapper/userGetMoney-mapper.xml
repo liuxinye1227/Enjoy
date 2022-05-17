@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.facishare.pay.business.dao.impl.UserGetMoneyDaoImpl">
+    
+    <resultMap id="BaseResultMap" type="userGetMoneyDo">
+        <id property="id" column="id" />
+        <result property="orderNo" column="order_no" />
+        <result property="enterpriseAccount" column="enterprise_account" />
+        <result property="fsUserId" column="fs_user_id" />
+        <result property="amount" column="amount" />
+        <result property="fee" column="fee" />
+        <result property="actualFee" column="actual_fee" />
+        <result property="bankNo" column="bank_no"/>
+        <result property="bankName" column="bank_name" />
+        <result property="createTime" column="create_time" />
+        <result property="auditor" column="auditor" />
+        <result property="teller" column="teller" />
+        <result property="invoice" column="invoice" />
+        <result property="operTime" column="oper_time" />
+        <result property="city" column="city" />
+        <result property="province" column="province" />
+        <result property="bankBranchName" column="bank_branch_name" />
+        <result property="cardNo" column="card_no" />
+        <result property="failReason" column="fail_reason" />
+        <result property="batchId" column="batch_id" />
+        <result property="batchNo" column="batch_no" />
+        <result property="busiTradeNo" column="busi_trade_no" />
+        <result property="status" column="status" typeHandler="com.facishare.pay.common.utils.EnumStatusHandler"/>
+    </resultMap>
+    
+    <sql id="All_Column">
+        id,
+        order_no,
+        enterprise_account,
+        fs_user_id,
+        amount,
+        fee,
+        actual_fee,
+        bank_no,
+        bank_name,
+        create_time,
+        auditor,
+        teller,
+        invoice,
+        oper_time,
+        city,
+        province,
+        bank_branch_name,
+        card_no,
+        fail_reason,
+        batch_id,
+        batch_no,
+        busi_trade_no,
+        status
+    </sql>
+
+    <!-- 分页查询用户提现流水 -->
+	<select id="queryUserGetMoneyPage" parameterType="map" resultMap="BaseResultMap">
+        SELECT 
+        <include refid="All_Column"></include>
+        FROM user_getmoney userGetMoney
+        <include refid="userGetMoneyCondition"></include>
+        ORDER BY create_time DESC
+        limit #{limit} offset #{offset}
+    </select>
+    
+    <!-- 查询用户提现流水总数 -->
+    <select id="queryUserGetMoneyCount" parameterType="map" resultType="long">
+        SELECT 
+            COUNT(*)
+        FROM user_getmoney userGetMoney
+        <include refid="userGetMoneyCondition"></include>
+    </select>
+    
+    <!-- 根据ID查询用户提现流水 -->
+    <select id="queryUserGEtMoneyById" parameterType="map" resultMap="BaseResultMap">
+        SELECT 
+        <include refid="All_Column"></include>
+        FROM user_getmoney
+        where id = #{id}
+    </select>
+    
+    <!-- 根据orderNo查询用户提现流水 -->
+    <select id="queryUserGetMoneyByOrderNo" parameterType="map" resultMap="BaseResultMap">
+        SELECT 
+        <include refid="All_Column"></include>
+        FROM user_getmoney
+        where order_no = #{orderNo}
+    </select>
+    
+    <!-- 添加用户提现流水 -->
+    <insert id="addUserGetMoney" parameterType="userGetMoneyDo">
+        INSERT INTO user_getmoney(
+            order_no,
+	        enterprise_account,
+	        fs_user_id,
+	        amount,
+	        fee,
+	        actual_fee,
+	        bank_no,
+	        bank_name,
+	        create_time,
+	        auditor,
+	        teller,
+	        invoice,
+	        oper_time,
+	        city,
+	        province,
+	        bank_branch_name,
+	        fail_reason,
+	        batch_id,
+	        batch_no,
+	        busi_trade_no,
+	        status,
+	        card_no)
+        VALUES (
+                #{orderNo},
+	            #{enterpriseAccount},
+	            #{fsUserId},
+	            #{amount},
+	            #{fee},
+	            #{actualFee},
+	            #{bankNo},
+	            #{bankName},
+	            #{createTime},
+	            #{auditor},
+	            #{teller},
+	            #{invoice},
+	            #{operTime},
+	            #{city},
+	            #{province},
+	            #{bankBranchName},
+	            #{failReason},
+	            #{batchId},
+	            #{batchNo},
+	            #{busiTradeNo},
+	            #{status,typeHandler=com.facishare.pay.common.utils.EnumStatusHandler},
+	            #{cardNo}
+            )
+    </insert>
+    <!-- 更新状态 -->
+    <update id="updateUserGetMoneyStatus" parameterType="map">
+        UPDATE 
+            user_getmoney 
+	        <set>
+	           <if test="status != null">
+	               status = #{status}
+	           </if>
+	           <if test="auditor != null">
+	               , auditor = #{auditor}
+	           </if>
+	           <if test="batchId != null">
+	               , batch_id = #{batchId}
+	           </if>
+	           <if test="batchNo != null">
+	               , batch_no = #{batchNo}
+	           </if>
+	           <if test="busiTradeNo != null">
+	               , busi_trade_no = #{busiTradeNo}
+	           </if>
+	           <if test="failReason != null">
+	               , fail_reason = #{failReason}
+	           </if>
+	           <if test="invoice != null">
+	               , invoice = #{invoice}
+	           </if>
+	           <if test="teller != null">
+	               , teller = #{teller}
+	           </if>
+	           <if test="operTime != null">
+	               , oper_time = #{operTime}
+	           </if>
+	        </set>
+	    WHERE order_no = #{orderNo}
+    </update>
+    
+    <!-- 更新状态 -->
+    <update id="updateGetMoneyStatus" parameterType="map">
+        UPDATE user_getmoney SET status = #{status} WHERE id = #{id}
+    </update>
+	
+    <sql id="userGetMoneyCondition">
+        <where>
+            <if test="orderNo != null">
+                userGetMoney.order_no = #{orderNo}
+            </if>
+            <if test="enterpriseAccount != null">
+                AND userGetMoney.enterprise_account = #{enterpriseAccount}
+            </if>
+            <if test="fsUserId != null">
+                AND userGetMoney.fs_user_id = #{fsUserId}
+            </if>
+            <if test="minAmount != null">
+                <![CDATA[AND userGetMoney.amount >= #{minAmount}]]>  
+            </if>
+            <if test="maxAmount != null">
+                <![CDATA[AND userGetMoney.amount >= #{maxAmount}]]>  
+            </if>
+            <if test="bankNo != null">
+                AND userGetMoney.bankNo = #{bankNo}
+            </if>
+            <if test="auditor != null">
+                AND userGetMoney.auditor = #{auditor}
+            </if>
+            <if test="teller != null">
+                AND userGetMoney.teller = #{teller}
+            </if>
+            <if test="invoice != null">
+                AND userGetMoney.invoice = #{invoice}
+            </if>
+            <if test="city != null">
+                AND userGetMoney.city = #{city}
+            </if>
+            <if test="province != null">
+                AND userGetMoney.province = #{province}
+            </if>
+            <if test="subBank != null">
+                AND userGetMoney.bank_Branch_Name = #{bankBranchName}
+            </if>
+            <if test="busiTradeNo != null">
+                AND userGetMoney.busi_trade_no = #{busiTradeNo}
+            </if>
+            <if test="beginTime != null">
+                <![CDATA[
+                AND userGetMoney.create_time >= #{beginTime}
+                ]]>                 
+            </if>
+            <if test="endTime != null">
+                <![CDATA[
+                AND userGetMoney.create_time < #{endTime}
+                ]]>
+            </if>
+            <if test="operBeginTime != null">
+                <![CDATA[
+                AND userGetMoney.oper_time >= #{operBeginTime}
+                ]]>                 
+            </if>
+            <if test="operEndTime != null">
+                <![CDATA[
+                AND userGetMoney.oper_time < #{operEndTime}
+                ]]>
+            </if>
+            <if test="status != null">
+                AND userGetMoney.status = #{status}
+            </if>
+        </where>
+    </sql>
+</mapper>

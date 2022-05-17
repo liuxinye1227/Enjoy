@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.facishare.pay.bill.dao.impl.BillLogDaoImpl">
+    
+    <resultMap id="BaseResultMap" type="billLogDo">
+        <id property="id" column="id" />
+        <result property="busiNo" column="busi_no" />
+        <result property="transType" column="trans_type" />
+        <result property="orderNo" column="order_no" />
+        <result property="enterpriseAccount" column="enterprise_account" />
+        <result property="fsUserId" column="fs_user_id" />
+        <result property="amount" column="amount" />
+        <result property="balance" column="balance" />
+        <result property="createTime" column="create_time" />
+        <result property="requestTime" column="request_time" />
+    </resultMap>
+    
+    <sql id="All_Column">
+        id,
+        busi_no,
+        trans_type,
+        order_no,
+        enterprise_account,
+        fs_user_id,
+        amount,
+        balance,
+        create_time,
+        request_time
+    </sql>
+
+    <!-- 添加对账流水记录 -->
+    <insert id="addBillLog" parameterType="billLogDo" >
+        INSERT INTO bill_log(trans_type, busi_no, order_no, enterprise_account, fs_user_id, amount, balance, create_time, request_time)
+        VALUES (
+                #{transType},
+                #{busiNo},
+                #{orderNo},
+                #{enterpriseAccount},
+                #{fsUserId},
+                #{amount},
+                #{balance},
+                #{createTime},
+                #{requestTime}
+            )
+    </insert>
+    
+    <!-- 查询用户钱包流水总数 -->
+    <select id="queryBillLog" parameterType="map" resultMap="BaseResultMap">
+        SELECT 
+            <include refid="All_Column"></include>
+        FROM bill_log
+        WHERE
+            fs_user_id = #{fsUserId}
+            AND enterprise_account = #{enterpriseAccount}
+            <![CDATA[
+            AND create_time >= #{createTime}
+            AND create_time < #{endTime}
+            ]]>
+    </select>
+    
+    
+    <resultMap id="billLogResultMap" type="billLogResultDo">
+        <result property="enterpriseAccount" column="enterprise_account" />
+        <result property="fsUserId" column="fs_user_id" />
+        <result property="actualBalance" column="actual_balance" />
+        <result property="realBalance" column="real_balance" />
+    </resultMap>
+    
+    <!-- 对账统计 -->
+    <select id="accountBillLogResult" parameterType="map" resultMap="billLogResultMap">
+        select log.enterprise_account,log.fs_user_id, log.real_balance + ifnull(detail.balance, 0) as real_balance, log.actual_balance 
+		from (
+		  SELECT
+		        log.id,
+		        log.enterprise_account,
+		        log.fs_user_id,
+		        sum(
+		            CASE
+		            WHEN log.trans_type = 10000
+		            OR log.trans_type = 20001 THEN
+		                log.amount
+		            ELSE
+		                log.amount *- 1
+		            END
+		        ) real_balance,
+		        (
+		            SELECT
+		                l.balance
+		            FROM
+		                bill_log l
+		            WHERE
+		                l.request_time = max(log.request_time)
+		        ) actual_balance
+		    FROM
+		        bill_log log
+		    WHERE
+		      <![CDATA[
+                  log.request_time >= #{beginTime}
+                  AND log.request_time < #{endTime}
+              ]]>
+		    GROUP BY
+		        log.enterprise_account ,
+		        log.fs_user_id 
+		) log 
+		left join 
+		(
+            select * from 
+                bill_result_detail detail
+                where 
+                <![CDATA[detail.update_time >= #{beginTime}
+                AND detail.update_time < #{endTime}
+                ]]>
+        ) detail
+		on 
+		    detail.enterprise_account = log.enterprise_account
+		  AND detail.fs_user_id = log.fs_user_id
+        order by log.id
+        limit #{limit} offset #{offset}
+    </select>
+    
+    <!-- 对账统计总数 -->
+    <select id="accountBillLogResultCount" parameterType="map" resultType="long">
+        select count(*) from (
+			SELECT
+			    log.enterprise_account,
+			    log.fs_user_id
+			    
+			FROM
+			    bill_log log
+			WHERE
+			    <![CDATA[
+                  log.request_time >= #{beginTime}
+                  AND log.request_time < #{endTime}
+                ]]>
+			GROUP BY
+			    log.enterprise_account,
+			    log.fs_user_id
+			) total
+    </select>
+	
+</mapper>
