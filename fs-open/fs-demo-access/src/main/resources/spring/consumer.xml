@@ -1,0 +1,19 @@
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://code.alibabatech.com/schema/dubbo http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+
+
+         
+    <!-- t通讯录 -->
+    <dubbo:reference interface="com.facishare.open.addressbook.api.CircleService" id="circleService" check="false" version="1.0"/>
+    <dubbo:reference interface="com.facishare.open.addressbook.api.EmployeeService" id="employeeService" check="false"  version="1.0"/>
+
+    <!-- 登录 -->
+    <dubbo:reference id="userAccountService" interface="com.facishare.uc.api.service.UserAccountService" protocol="dubbo"/>
+
+
+
+    
+</beans>
