@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd http://www.springframework.org/schema/data/mongo http://www.springframework.org/schema/data/mongo/spring-mongo.xsd"
+       default-lazy-init="false">
+
+
+    <!--<bean id="redisFactory"  class="com.facishare.open.common.storage.redis.RedisTemplate">-->
+        <!--<property name="hosts" value="${fs.open.msg.redis.url}"/>-->
+        <!--<property name="password" value="${fs.open.msg.redis.password}"/>-->
+        <!--<property name="masterName" value="${fs.open.msg.redis.mastername}"/>-->
+    <!--</bean>-->
+
+    <!--<bean id="jedisSupport" class="com.github.jedis.support.JedisFactoryBean" p:configName="fs-open-app-center"/>-->
+
+    <tx:annotation-driven/>
+
+    <context:annotation-config/>
+    <context:component-scan base-package="com.facishare.open.manage.dao"/>
+
+    <!--<bean id="devController" class="com.facishare.open.manage.controller.DevController"> </bean>-->
+
+    <import resource="classpath:spring/spring-jdbc.xml"/>
+    <!--<import resource="classpath:spring/spring-mongo.xml"/>-->
+    <!--<import resource="classpath:spring/fs-open-manager-consumer.xml"/>-->
+
+    <bean id="apps_dataSource" class="com.github.mybatis.spring.DynamicDataSource">
+        <property name="configName" value="db-open-app-center"/>
+    </bean>
+
+    <bean id="apps_sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="apps_dataSource" />
+        <property name="typeAliasesPackage" value="com.facishare.open.app.center.api.model" />
+        <property name="mapperLocations" value="classpath:spring/mapper/*.xml" />
+        <property name="configLocation" value="classpath:mybatis.xml" />
+    </bean>
+
+    <bean id="apps_jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+        <property name="dataSource" ref="apps_dataSource"/>
+    </bean>
+
+    <!-- scan for mapper and let them be autowired -->
+    <bean class="com.github.mybatis.spring.ScannerConfigurer">
+        <property name="basePackage" value="com.facishare.open.manage.dao"/>
+        <property name="sqlSessionFactoryBeanName" value="apps_sqlSessionFactory"/>
+    </bean>
+
+    <import resource="classpath:spring/spring-cms.xml"/>
+
+    <bean class="com.fxiaoke.metrics.MetricsConfiguration"/>
+</beans>
+

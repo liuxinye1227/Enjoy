@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.facishare.open.manage.activityea.dao.ActivityEaDAO">
+
+	<!-- 统计N天内活跃企业数，去重复 -->
+	<select id="countEnterpriseIdInDays" resultType="Long">
+		SELECT count(distinct enterprise_id)  FROM enterprise_activity t WHERE TO_DAYS(t.activity_date) >= (TO_DAYS(now()) -
+		#{days})
+	</select>
+
+	<!-- 查询N天内活跃企业id，去重复 -->
+	<select id="selectEnterpriseIdInDays" resultType="Integer">
+		SELECT distinct enterprise_id  FROM enterprise_activity t WHERE TO_DAYS(t.activity_date) >= (TO_DAYS(now()) -
+		#{days})
+	</select>
+
+	<!-- 查询N天内活跃企业id，去重复 -->
+	<select id="selectEnterpriseIdInDaysByLimit" resultType="Integer">
+		SELECT distinct enterprise_id  FROM enterprise_activity t WHERE TO_DAYS(t.activity_date) >= (TO_DAYS(now()) -
+		#{days}) limit #{offset} , #{rows}
+	</select>
+</mapper>

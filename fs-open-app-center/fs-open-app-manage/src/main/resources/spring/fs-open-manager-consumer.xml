@@ -1,0 +1,113 @@
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://code.alibabatech.com/schema/dubbo http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+    <!-- dubbo config  -->
+    <dubbo:application name="${dubbo.application.name}" />
+    <dubbo:registry address="${dubbo.registry.address}" file=".dubbo/dubbo-registry.cache"/>
+    <!-- end -->
+   <dubbo:consumer timeout="${fs.open.app.center.dubbo.timeout}" check="false" filter="tracerpc,invokelog"/>
+    <!-- 消费者 -->
+   <dubbo:reference version="1.1" id="templateService" interface="com.facishare.open.app.center.api.service.template.TemplateService"/>
+   <dubbo:reference version="1.3" id="appEaVisibleService" interface="com.facishare.open.app.center.api.service.AppEaVisibleService"/>
+   <dubbo:reference version="1.3" id="openAppService" interface="com.facishare.open.app.center.api.service.OpenAppService"/>
+   <dubbo:reference version="1.3" id="dictService" interface="com.facishare.open.app.center.api.service.OpenDictService"/>
+   <dubbo:reference version="1.3" id="appIconService" interface="com.facishare.open.app.center.api.service.AppIconService"/>
+   <dubbo:reference version="1.3" id="openAppScopeOrderService" interface="com.facishare.open.app.center.api.service.OpenAppScopeOrderService"/>
+   <dubbo:reference version="1.3" id="openDevService" interface="com.facishare.open.app.center.api.service.OpenDevService" />
+   <dubbo:reference version="1.3" id="openAppComponentService" interface="com.facishare.open.app.center.api.service.OpenAppComponentService" />
+   <dubbo:reference version="1.3" id="payAppService" interface="com.facishare.open.app.center.api.service.PayAppService" />
+   <dubbo:reference version="1.3" id="feedbackService" interface="com.facishare.open.app.center.api.service.FeedbackService" />
+   <dubbo:reference version="1.3" id="openFsUserAppViewService" interface="com.facishare.open.app.center.api.service.OpenFsUserAppViewService" />
+   <dubbo:reference version="1.3" id="openFsUserBindAppService" interface="com.facishare.open.app.center.api.service.OpenFsUserBindAppService" />
+   <dubbo:reference version="1.3" id="openQuotaService" interface="com.facishare.open.app.center.api.service.OpenQuotaService" />
+   <dubbo:reference version="1.0" id="crmViewService" interface="com.facishare.open.app.center.api.service.CrmViewService"/>
+   <!-- broker.message -->
+   <dubbo:reference version="1.0" id="sendControlService" interface="com.facishare.open.broker.message.service.SendControlService"/>
+   <!-- broker.login -->
+   <dubbo:reference version="1.0" id="fsSigService" interface="com.facishare.open.broker.login.service.FsSigService"/>
+   
+   <!-- msg-provider -->
+   <!--<dubbo:reference version="1.0" id="msgRecordsService" interface="com.facishare.open.msg.service.MsgRecordsService"/>-->
+   <dubbo:reference version="1.0" id="msgSessionService" interface="com.facishare.open.msg.service.MsgSessionService"/>
+
+	<!-- oauth -->
+   <dubbo:reference version="1.1" id="scopeService" interface="com.facishare.open.oauth.service.ScopeService"/>
+   <dubbo:reference version="1.1" id="appService" interface="com.facishare.open.oauth.service.AppService"/>
+   <dubbo:reference version="1.1" id="appServiceRefService" interface="com.facishare.open.oauth.service.AppServiceRefService"/>
+   <dubbo:reference version="1.1" id="authService" interface="com.facishare.open.oauth.service.AuthService"/>
+
+    <!-- 文件服务 -->
+    <dubbo:reference version="1.0" timeout="${fs.open.app.center.dubbo.warehouse.timeout}" id="fileService"
+                     interface="com.facishare.open.warehouse.api.FileService"/>
+    <dubbo:reference version="1.0" timeout="${fs.open.app.center.dubbo.warehouse.timeout}" id="iconService"
+                     interface="com.facishare.open.warehouse.api.IconService"/>
+
+
+    <!-- 帮助中心 -->
+   <dubbo:reference version="1.2" id="categoryService" interface="com.facishare.open.support.service.CategoryService" />
+   <dubbo:reference version="1.2" id="articleService" interface="com.facishare.open.support.service.ArticleService" />
+
+   <!-- 企业搜索 add by lambo@20151211 -->
+   <dubbo:reference version="1.1" id="enterpriseService" interface="com.facishare.open.addressbook.api.EnterpriseService"/>
+
+    <!-- add by lambo@20160114  banner位 -->
+    <dubbo:reference version="1.0" id="appCenterBannerService" interface="com.facishare.open.app.ad.api.service.AppCenterBannerService"/>
+    <!-- add by lambo@20160114 精品应用 -->
+    <dubbo:reference version="1.0" id="appCenterBestAppService" interface="com.facishare.open.app.ad.api.service.AppCenterBestAppService"/>
+
+    <dubbo:reference version="1.0" id="checkAppUpdatedService" interface="com.facishare.open.app.ad.api.service.CheckAppUpdatedService" />
+
+    <!-- add by xialf@20160125 用户反馈 -->
+    <dubbo:reference version="1.1" id="employeeService" interface="com.facishare.open.addressbook.api.EmployeeService"/>
+
+    <!-- add by zhouq@20160413 组件灰度地址 -->
+    <dubbo:reference version="1.0" id="openComponentUrlGrayService" interface="com.facishare.open.app.center.api.service.OpenComponentUrlGrayService" />
+    <!-- add by zhouq@20160413 组件灰度地址缓存管理 -->
+    <dubbo:reference version="1.0" id="openComponentLoginUrlService" interface="com.facishare.open.app.center.api.service.OpenComponentLoginUrlService" />
+
+    <!-- add by zhouq@20160420 权限系统 -->
+    <dubbo:reference version="1.0" id="userService" interface="com.facishare.portal.service.UserService" />
+    <!-- add by zhouq@20160506 应用白名单-->
+    <dubbo:reference version="1.0" id="appIpWhiteListService" interface="com.facishare.open.appaccesscontrol.service.AppIpWhiteListService" />
+
+    <!-- add by xialf@20160602 配额或试用-->
+    <dubbo:reference version="1.0" id="quotaService" interface="com.facishare.open.app.pay.api.service.QuotaService" />
+    <dubbo:reference version="1.0" id="employeeTrialService" interface="com.facishare.open.app.pay.api.service.EmployeeTrialService" />
+    <!-- add by lambo@20160616 发送运营消息使用的任务. -->
+    <dubbo:reference version="1.0" id="taskService" interface="com.facishare.open.app.center.api.service.TaskService"/>
+    <dubbo:reference version="1.3" id="openAppAdminService" interface="com.facishare.open.app.center.api.service.OpenAppAdminService" />
+    <dubbo:reference version="1.0" id="materialService" interface="com.facishare.open.material.api.service.MaterialService" />
+    <dubbo:reference version="1.0" id="monthActivityEaService" interface="com.facishare.open.app.center.api.service.MonthActivityEaService" />
+    <dubbo:reference version="1.0" id="materialMessageService" interface="com.facishare.open.material.api.service.MaterialMessageService" />
+
+    <!-- add by lambo@20160624 服务号3.0做数据迁移. -->
+    <dubbo:reference version="1.0" id="appDataMigrationConfigService" interface="com.facishare.open.app.center.api.service.migration.AppDataMigrationConfigService" />
+    <dubbo:reference version="1.0" id="appDataMigrationHistoryService" interface="com.facishare.open.app.center.api.service.migration.AppDataMigrationHistoryService" />
+    <dubbo:reference version="1.0" id="customMenuService" interface="com.facishare.open.custom.menu.api.service.CustomMenuService"/>
+    <dubbo:reference version="1.0" id="messageExhibitionService" interface="com.facishare.open.msg.service.MessageExhibitionService"/>
+    <dubbo:reference version="1.1" id="customAppService" interface="com.facishare.open.oauth.service.CustomAppService"/>
+    <dubbo:reference version="1.1" id="corpService" interface="com.facishare.open.oauth.service.CorpService"   />
+    <dubbo:reference version="1.1" id="eaAuthService" interface="com.facishare.open.oauth.service.EaAuthService"   />
+    <dubbo:reference version="1.0" id="msgAutoReplyService" interface="com.facishare.open.autoreplymsg.service.MsgAutoReplyService" />
+
+    <!-- add by lambo@20161019 运营crm发送文本续费消息 -->
+    <dubbo:reference version="1.0" id="sendMessageService" interface="com.facishare.open.msg.service.SendMessageService" />
+    <!-- add by huyue@20161031 查询运营中心操作日志 -->
+    <dubbo:reference version="1.0" id="operationLogService" interface="com.facishare.open.operating.center.api.service.OperationLogService" />
+
+    <dubbo:reference version="1.1" id="circleService" interface="com.facishare.open.addressbook.api.CircleService"/>
+
+    <dubbo:reference version="1.0" id="qyWechatAuthService" interface="com.facishare.open.notify.proxy.service.external.QyWechatAuthService" />
+
+
+    <!--评论系统-->
+    <dubbo:reference id="commentService" interface="com.facishare.appserver.comment.api.CommentService"  />
+
+    <!--数据检测-->
+    <dubbo:reference version="1.0" id="enterpriseCheckService" interface="com.facishare.open.data.check.service.EnterpriseCheckService"  />
+    <dubbo:reference version="1.0" id="enterpriseRepairService" interface="com.facishare.open.data.check.service.EnterpriseRepairService"  />
+
+    <dubbo:reference id="openSessionService" interface="com.facishare.qixin.api.open.OpenSessionService"  />
+</beans>

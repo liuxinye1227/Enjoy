@@ -1,0 +1,283 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:context="http://www.springframework.org/schema/context"
+	   xmlns:tx="http://www.springframework.org/schema/tx"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans
+			http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+			http://www.springframework.org/schema/context
+			http://www.springframework.org/schema/context/spring-context-3.0.xsd
+			http://www.springframework.org/schema/tx
+			http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+			http://www.springframework.org/schema/context
+			http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+	<bean id="propertyConfigurer"
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>classpath:test-appcenter.properties</value>
+			</list>
+		</property>
+	</bean>
+	<!-- ioc -->
+	<context:annotation-config />
+	<context:component-scan base-package="com.facishare.open.manage" />
+	<!-- 数据源 -->
+	<bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource"
+		init-method="init" destroy-method="close">
+		<property name="driverClassName" value="${fs.open.app.center.mysql.driverClass}" />
+		<property name="url" value="${fs.open.app.center.mysql.jdbcUrl}" />
+		<property name="username" value="${fs.open.app.center.mysql.user}" />
+		<property name="password" ref="passwordProvider" />
+
+		<property name="filters" value="stat,log4j" />
+
+		<property name="maxActive" value="${fs.open.app.center.mysql.maxActive}" />
+		<property name="initialSize" value="${fs.open.app.center.mysql.minIdle}" />
+		<property name="maxWait" value="60000" />
+		<property name="minIdle" value="${fs.open.app.center.mysql.minIdle}" />
+
+		<property name="timeBetweenEvictionRunsMillis" value="60000" />
+		<property name="minEvictableIdleTimeMillis" value="300000" />
+
+		<property name="validationQuery" value="SELECT 'x'" />
+		<property name="testWhileIdle" value="true" />
+		<property name="testOnBorrow" value="false" />
+		<property name="testOnReturn" value="false" />
+
+		<property name="poolPreparedStatements" value="true" />
+		<property name="maxPoolPreparedStatementPerConnectionSize"
+			value="50" />
+	</bean>
+	<!-- 密码管理 -->
+	<bean name="passwordProvider"
+		class="com.facishare.open.common.password.DbPasswordFactoryBean">
+		<property name="cryptWord" value="${fs.open.app.center.mysql.password}" />
+	</bean>
+
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="typeAliasesPackage" value="com.facishare.open.manage.stat.model" />
+		<property name="mapperLocations" value="classpath:spring/mapper/*/*.xml"/>
+
+		<property name="configLocation" value="classpath:mybatis.xml" />
+	</bean>
+
+	<!-- 自动生成dao实现类 -->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+	    <property name="basePackage" value="com.facishare.open.manage.stat.dao" />
+	</bean>
+
+	<!-- 事务管理器 -->
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	<tx:annotation-driven transaction-manager="transactionManager"
+		proxy-target-class="true" />
+
+	<bean id="templateServiceMock" class="org.mockito.Mockito"
+		factory-method="mock">
+		<constructor-arg value="com.facishare.open.app.center.api.service.template.TemplateService" />
+	</bean>
+	<bean id="appEaVisibleServiceMock" class="org.mockito.Mockito"
+		factory-method="mock">
+		<constructor-arg value="com.facishare.open.app.center.api.service.AppEaVisibleService" />
+	</bean>
+	<bean id="openAppServiceMock" class="org.mockito.Mockito"
+		factory-method="mock">
+		<constructor-arg value="com.facishare.open.app.center.api.service.OpenAppService" />
+	</bean>
+	<bean id="openDictServiceMock" class="org.mockito.Mockito"
+		factory-method="mock">
+		<constructor-arg value="com.facishare.open.app.center.api.service.OpenDictService" />
+	</bean>
+	<bean id="appIconServiceMock" class="org.mockito.Mockito"
+		factory-method="mock">
+		<constructor-arg value="com.facishare.open.app.center.api.service.AppIconService" />
+	</bean>
+	<bean id="openAppScopeOrderServiceMock" class="org.mockito.Mockito"
+		factory-method="mock">
+		<constructor-arg value="com.facishare.open.app.center.api.service.OpenAppScopeOrderService" />
+	</bean>
+	<bean id="openDevServiceMock" class="org.mockito.Mockito"
+		factory-method="mock">
+		<constructor-arg value="com.facishare.open.app.center.api.service.OpenDevService" />
+	</bean>
+	<bean id="openAppComponentServiceMock" class="org.mockito.Mockito"
+		factory-method="mock">
+		<constructor-arg value="com.facishare.open.app.center.api.service.OpenAppComponentService" />
+	</bean>
+	<bean id="sendControlServiceMock" class="org.mockito.Mockito"
+		factory-method="mock">
+		<constructor-arg value="com.facishare.open.broker.message.service.SendControlService" />
+	</bean>
+	<bean id="payAppService" class="org.mockito.Mockito"
+		  factory-method="mock">
+		<constructor-arg value="com.facishare.open.app.center.api.service.PayAppService" />
+	</bean>
+
+	<bean id="fsSigServiceMock" class="org.mockito.Mockito"
+		factory-method="mock">
+		<constructor-arg value="com.facishare.open.broker.login.service.FsSigService" />
+	</bean>
+	<bean id="scopeServiceMock" class="org.mockito.Mockito"
+		factory-method="mock">
+		<constructor-arg value="com.facishare.open.oauth.service.ScopeService" />
+	</bean>
+	<bean id="appServiceMock" class="org.mockito.Mockito"
+		factory-method="mock">
+		<constructor-arg value="com.facishare.open.oauth.service.AppService" />
+	</bean>
+	<bean id="fileServiceMock" class="org.mockito.Mockito"
+		factory-method="mock">
+		<constructor-arg value="com.facishare.open.warehouse.api.FileService" />
+	</bean>
+<!--
+	<bean id="msgRecordsServiceMock" class="org.mockito.Mockito"
+		factory-method="mock">
+		<constructor-arg value="com.facishare.open.msg.service.MsgRecordsService" />
+	</bean>-->
+
+	<bean id="msgSessionServiceMock" class="org.mockito.Mockito"
+		factory-method="mock">
+		<constructor-arg value="com.facishare.open.msg.service.MsgSessionService" />
+	</bean>
+
+	<bean id="redisTemplateMock" class="org.mockito.Mockito"
+		  factory-method="mock">
+		<constructor-arg value="com.facishare.open.common.storage.redis.RedisTemplate" />
+	</bean>
+
+	<bean id="userService" class="org.mockito.Mockito" factory-method="mock">
+		<constructor-arg value="com.facishare.portal.service.UserService" />
+	</bean>
+
+	<bean id="monthActivityEaService" class="org.mockito.Mockito" factory-method="mock">
+		<constructor-arg value="com.facishare.open.app.center.api.service.MonthActivityEaService" />
+	</bean>
+
+	<bean id="enterpriseService" class="org.mockito.Mockito" factory-method="mock">
+		<constructor-arg value="com.facishare.open.addressbook.api.EnterpriseService" />
+	</bean>
+
+	<bean id="activityEaDAO" class="org.mockito.Mockito" factory-method="mock">
+		<constructor-arg value="com.facishare.open.manage.activityea.dao.ActivityEaDAO" />
+	</bean>
+
+	<bean id="appCenterBannerService" class="org.mockito.Mockito" factory-method="mock">
+		<constructor-arg value="com.facishare.open.app.ad.api.service.AppCenterBannerService" />
+	</bean>
+
+	<bean id="appCenterBestAppService" class="org.mockito.Mockito" factory-method="mock">
+		<constructor-arg value="com.facishare.open.app.ad.api.service.AppCenterBestAppService" />
+	</bean>
+
+	<bean id="feedbackService" class="org.mockito.Mockito" factory-method="mock">
+		<constructor-arg value="com.facishare.open.app.center.api.service.FeedbackService" />
+	</bean>
+
+	<bean id="employeeService" class="org.mockito.Mockito" factory-method="mock">
+		<constructor-arg value="com.facishare.open.addressbook.api.EmployeeService" />
+	</bean>
+
+	<bean id="iconService" class="org.mockito.Mockito" factory-method="mock">
+		<constructor-arg value="com.facishare.open.warehouse.api.IconService" />
+	</bean>
+
+	<bean id="checkAppUpdatedService" class="org.mockito.Mockito" factory-method="mock">
+		<constructor-arg value="com.facishare.open.app.ad.api.service.CheckAppUpdatedService" />
+	</bean>
+
+	<bean id="openComponentUrlGrayService" class="org.mockito.Mockito" factory-method="mock">
+		<constructor-arg value="com.facishare.open.app.center.api.service.OpenComponentUrlGrayService" />
+	</bean>
+
+	<bean id="openComponentLoginUrlService" class="org.mockito.Mockito" factory-method="mock">
+		<constructor-arg value="com.facishare.open.app.center.api.service.OpenComponentLoginUrlService" />
+	</bean>
+
+	<bean id="appIpWhiteListService" class="org.mockito.Mockito" factory-method="mock">
+		<constructor-arg value="com.facishare.open.appaccesscontrol.service.AppIpWhiteListService" />
+	</bean>
+
+	<bean id="articleService" class="org.mockito.Mockito" factory-method="mock">
+		<constructor-arg value="com.facishare.open.support.service.ArticleService" />
+	</bean>
+
+	<bean id="categoryService" class="org.mockito.Mockito" factory-method="mock">
+		<constructor-arg value="com.facishare.open.support.service.CategoryService" />
+	</bean>
+
+	<bean id="taskService" class="org.mockito.Mockito" factory-method="mock">
+		<constructor-arg value="com.facishare.open.app.center.api.service.TaskService" />
+	</bean>
+
+	<bean id="materialService" class="org.mockito.Mockito" factory-method="mock">
+		<constructor-arg value="com.facishare.open.material.api.service.MaterialService" />
+	</bean>
+
+	<bean id="openAppAdminService" class="org.mockito.Mockito" factory-method="mock">
+		<constructor-arg value="com.facishare.open.app.center.api.service.OpenAppAdminService" />
+	</bean>
+
+	<bean id="customMenuService" class="org.mockito.Mockito" factory-method="mock">
+		<constructor-arg value="com.facishare.open.custom.menu.api.service.CustomMenuService" />
+	</bean>
+
+	<bean id="appDataMigrationHistoryService" class="org.mockito.Mockito" factory-method="mock">
+		<constructor-arg value="com.facishare.open.app.center.api.service.migration.AppDataMigrationHistoryService" />
+	</bean>
+
+	<bean id="appDataMigrationConfigService" class="org.mockito.Mockito" factory-method="mock">
+		<constructor-arg value="com.facishare.open.app.center.api.service.migration.AppDataMigrationConfigService" />
+	</bean>
+
+	<bean id="openFsUserAppViewService" class="org.mockito.Mockito" factory-method="mock">
+		<constructor-arg value="com.facishare.open.app.center.api.service.OpenFsUserAppViewService" />
+	</bean>
+
+	<bean id="messageExhibitionService" class="org.mockito.Mockito" factory-method="mock">
+		<constructor-arg value="com.facishare.open.msg.service.MessageExhibitionService" />
+	</bean>
+
+	<bean id="msgAutoReplyService" class="org.mockito.Mockito" factory-method="mock">
+		<constructor-arg value="com.facishare.open.autoreplymsg.service.MsgAutoReplyService" />
+	</bean>
+
+	<bean id="openFsUserBindAppService" class="org.mockito.Mockito" factory-method="mock">
+		<constructor-arg value="com.facishare.open.app.center.api.service.OpenFsUserBindAppService" />
+	</bean>
+
+	<bean id="customAppService" class="org.mockito.Mockito" factory-method="mock">
+		<constructor-arg value="com.facishare.open.oauth.service.CustomAppService" />
+	</bean>
+
+	<bean id="corpService" class="org.mockito.Mockito" factory-method="mock">
+		<constructor-arg value="com.facishare.open.oauth.service.CorpService" />
+	</bean>
+
+	<bean id="eaAuthService" class="org.mockito.Mockito" factory-method="mock">
+		<constructor-arg value="com.facishare.open.oauth.service.EaAuthService" />
+	</bean>
+
+	<bean id="quotaService" class="org.mockito.Mockito" factory-method="mock">
+		<constructor-arg value="com.facishare.open.app.pay.api.service.QuotaService" />
+	</bean>
+
+	<bean id="openQuotaService" class="org.mockito.Mockito" factory-method="mock">
+		<constructor-arg value="com.facishare.open.app.center.api.service.OpenQuotaService" />
+	</bean>
+
+	<bean id="employeeTrialService" class="org.mockito.Mockito" factory-method="mock">
+		<constructor-arg value="com.facishare.open.app.pay.api.service.EmployeeTrialService" />
+	</bean>
+
+	<bean id="mergeJedisCmd" class="org.mockito.Mockito" factory-method="mock">
+		<constructor-arg value="com.github.jedis.support.MergeJedisCmd" />
+	</bean>
+
+
+
+
+</beans>

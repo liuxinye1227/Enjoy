@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.facishare.open.manage.dao.OpenAppDAO">
+
+	<select id="countService" resultType="Long">
+		SELECT count(1) FROM open_app	WHERE
+			<![CDATA[ gmt_create <= #{endCreateTime} ]]>
+		<if test="startCreateTime != null">
+			AND gmt_create >= #{startCreateTime}
+		</if>
+		AND `status` = 1
+		AND app_type = 5
+	</select>
+
+	<select id="countServiceEa" resultType="Long">
+		SELECT count(DISTINCT app_creater) FROM open_app	WHERE
+		<![CDATA[ gmt_create <= #{endCreateTime} ]]>
+		<if test="startCreateTime != null">
+			AND gmt_create >= #{startCreateTime}
+		</if>
+		AND `status` = 1
+		AND app_type = 5
+	</select>
+</mapper>

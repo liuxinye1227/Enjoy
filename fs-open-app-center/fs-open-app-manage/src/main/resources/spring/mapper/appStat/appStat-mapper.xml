@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.facishare.open.manage.stat.dao.AppStatDAO">
+	<resultMap id="appStatMap" type="map">
+		<result property="appId" column="app_id" />
+		<result property="cumulativeOpenEaNum" column="open_total" />
+		<result property="cumulativeUseEaNum" column="corp_total" />
+		<result property="cumulativeUserNum" column="user_total" />
+		<result property="yesterdayActiveEaNum" column="day_corp_num" />
+		<result property="yesterdayActiveUserNum" column="day_user_num" />
+	</resultMap>
+
+	<resultMap id="dtlAppStatMap" type="map">
+		<result property="appId" column="appId" />
+		<result property="statDate" column="stat_date" />
+		<result property="cumulativeOpenEaNum" column="open_total" />
+		<result property="cumulativeUseEaNum" column="corp_total" />
+		<result property="cumulativeUserNum" column="user_total" />
+		<result property="activeEaNum" column="day_corp_num" />
+		<result property="activeUserNum" column="day_user_num" />
+	</resultMap>
+
+	<resultMap id="dtlComponentStatMap" type="map">
+		<result property="componentId" column="component_id" />
+		<result property="statDate" column="stat_date" />
+		<result property="cumulativeOpenEaNum" column="open_total" />
+		<result property="cumulativeUseEaNum" column="corp_total" />
+		<result property="cumulativeUserNum" column="user_total" />
+		<result property="activeEaNum" column="day_corp_num" />
+		<result property="activeUserNum" column="day_user_num" />
+	</resultMap>
+	<!-- 应用数据的统计 分页记录数查询 -->
+	<select id="queryAllAppStat4SearchCount" resultType="long">
+		select count(*) from app_stat t where t.stat_date = DATE(#{statDate})
+		<if test="appId!=null">
+			and t.app_id=#{appId}
+		</if>
+	</select>
+	<!-- 应用数据的统计 分页单页数据加载 -->
+	<select id="queryAllAppStat4SearchList" resultMap="appStatMap">
+		select app_id,open_total,corp_total,user_total,day_corp_num,day_user_num
+		from app_stat t
+		where t.stat_date = DATE(#{statDate})
+		<if test="appId!=null">
+			and t.app_id=#{appId}
+		</if>
+		order by day_user_num DESC
+		limit #{limit} offset #{offset}
+	</select>
+
+	<!-- 查询指定时间段的app组件明细统计数据 -->
+	<select id="queryDtlByAppIdAndStatDate" resultMap="dtlAppStatMap">
+		SELECT
+			t.stat_date,
+			t.app_id,
+			t.open_total,
+			t.corp_total,
+			t.user_total,
+			t.add_corp_num,
+			t.add_user_num,
+			t.day_corp_num,
+			t.day_user_num
+		FROM app_stat t
+		where app_id = #{appId} and stat_date between #{startDate} and #{endDate}
+		ORDER by stat_date DESC
+	</select>
+	<!-- 查询指定时间段的组件的明细统计数据 -->
+	<select id="queryDtlByComponentIdsAndStatDate" resultMap="dtlComponentStatMap">
+		SELECT
+			t.stat_date,
+			t.component_id,
+			t.open_total,
+			t.corp_total,
+			t.user_total,
+			t.add_corp_num,
+			t.add_user_num,
+			t.day_corp_num,
+			t.day_user_num
+		FROM component_stat t
+		where component_id IN <foreach collection="componentIds" item="componentId" open="(" separator="," close=")">#{componentId}</foreach>
+		 and stat_date between #{startDate} and #{endDate}
+		ORDER by stat_date,component_id DESC
+	</select>
+</mapper>
