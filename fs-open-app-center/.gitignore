@@ -1,0 +1,11 @@
+.idea/
+target/
+*.iml
+.settings/
+.project
+.classpath
+*.ipr
+catalina.base_IS_UNDEFINED/
+.git
+/doc
+fs-open-app-center-apitest/

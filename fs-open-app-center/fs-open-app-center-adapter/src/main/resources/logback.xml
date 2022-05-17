@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration>
+    <property name="LOG_DIR" value="${catalina.base}/logs/bizlog"/>
+    <property name="COMMON_PATTERN" value="[%d{yyyy/MM/dd-HH:mm:ss.SSS}][%level][%class{0}:%line][%X{traceId}][%X{requestId}] %msg%n"/>
+
+    <appender name="FS" class="com.facishare.open.logback.appenders.FSOpenAppender">
+        <configName>log-logback-fs-open</configName>
+    </appender>
+
+    <appender name="ASYNC_FS" class="ch.qos.logback.classic.AsyncAppender">
+        <queueSize>512</queueSize>
+        <appender-ref ref="FS"/>
+        <includeCallerData>true</includeCallerData>
+    </appender>
+
+    <appender name="WARN" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>${catalina.base}/logs/bizlog/warn.log</File>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>WARN</level>
+        </filter>
+        <encoder>
+            <pattern>%d{yyyy/MM/dd-HH:mm:ss.SSS} [%thread] [%level] [%class:%line] %X{traceId} %msg%rEx{full,
+                java.lang.Thread,
+                javassist,
+                sun.reflect,
+                org.springframework,
+                org.apache,
+                org.eclipse.jetty,
+                $Proxy,
+                java.net,
+                java.io,
+                javax.servlet,
+                org.junit,
+                com.mysql,
+                com.sun,
+                org.mybatis.spring,
+                cglib,
+                CGLIB,
+                java.util.concurrent,
+                okhttp,
+                org.jboss,
+                }%n
+            </pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <FileNamePattern>${catalina.base}/logs/bizlog/warn.%d{yyyy-MM-dd}.log.zip</FileNamePattern>
+            <maxHistory>10</maxHistory>
+        </rollingPolicy>
+    </appender>
+
+    <appender name="ASYNC_WARN" class="ch.qos.logback.classic.AsyncAppender">
+        <queueSize>512</queueSize>
+        <appender-ref ref="WARN"/>
+        <includeCallerData>true</includeCallerData>
+    </appender>
+
+    <appender name="ALL" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>${catalina.base}/logs/bizlog/all.log</File>
+        <encoder>
+            <pattern>%d{yyyy/MM/dd-HH:mm:ss.SSS} [%thread] [%level] [%class{0}:%line] %X{traceId} %msg%rEx{full,
+                java.lang.Thread,
+                javassist,
+                sun.reflect,
+                org.springframework,
+                org.apache,
+                org.eclipse.jetty,
+                $Proxy,
+                java.net,
+                java.io,
+                javax.servlet,
+                org.junit,
+                com.mysql,
+                com.sun,
+                org.mybatis.spring,
+                cglib,
+                CGLIB,
+                java.util.concurrent,
+                okhttp,
+                org.jboss,
+                }%n
+            </pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <FileNamePattern>${catalina.base}/logs/bizlog/all.%d{yyyy-MM-dd}.log.zip</FileNamePattern>
+            <maxHistory>10</maxHistory>
+        </rollingPolicy>
+    </appender>
+
+    <appender name="ASYNC_ALL" class="ch.qos.logback.classic.AsyncAppender">
+        <queueSize>512</queueSize>
+        <appender-ref ref="ALL"/>
+        <includeCallerData>true</includeCallerData>
+    </appender>
+
+    <appender name="aspect" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_DIR}/aspect.log</file>
+        <!-- 可让每天产生一个日志文件，最多 30 个，自动回滚 -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_DIR}/aspect-%d{yyyyMMdd}.log.tar.gz</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <!-- 日志中默认打印traceId和userId，方便定位问题,异常栈中去掉包含如下字符的行避免打印很多无用的信息-->
+            <pattern>${COMMON_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="com.github" level="OFF" additivity="false"/>
+
+    <logger name="com.facishare.open.app.center.adapter.model.aop" level="INFO" additivity="true">
+        <appender-ref ref="aspect" />
+    </logger>
+
+    <root level="info">
+        <appender-ref ref="ASYNC_WARN"/>
+        <appender-ref ref="ASYNC_ALL"/>
+        <appender-ref ref="ASYNC_FS"/>
+    </root>
+</configuration>

@@ -1,0 +1,41 @@
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       	http://www.springframework.org/schema/aop
+		http://www.springframework.org/schema/aop/spring-aop.xsd
+		http://www.springframework.org/schema/context
+		http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!-- ioc -->
+    <context:annotation-config/>
+    <context:component-scan base-package="com.facishare.open.app.center"/>
+    <!-- aop -->
+    <!--Log Aop-->
+
+    <import resource="classpath:META-COMMON/fs-resteasy-ext.xml"/>
+    <import resource="classpath:springmvc-resteasy.xml"/>
+
+    <bean class="com.facishare.open.app.center.adapter.model.rest.controller.CrmController" id="crmController"/>
+
+    <bean id="queryAppAdminService" class="org.mockito.Mockito" factory-method="mock">
+        <constructor-arg value="com.facishare.open.app.center.api.service.QueryAppAdminService" />
+    </bean>
+    <bean id="openFsUserAppViewService" class="org.mockito.Mockito" factory-method="mock">
+        <constructor-arg value="com.facishare.open.app.center.api.service.OpenFsUserAppViewService" />
+    </bean>
+    <bean id="openAppAdminService" class="org.mockito.Mockito" factory-method="mock">
+        <constructor-arg value="com.facishare.open.app.center.api.service.OpenAppAdminService" />
+    </bean>
+    <bean id="quotaService" class="org.mockito.Mockito" factory-method="mock">
+        <constructor-arg value="com.facishare.open.app.pay.api.service.QuotaService" />
+    </bean>
+    <bean id="employeeTrialService" class="org.mockito.Mockito" factory-method="mock">
+        <constructor-arg value="com.facishare.open.app.pay.api.service.EmployeeTrialService" />
+    </bean>
+    <bean id="appViewBizService" class="org.mockito.Mockito" factory-method="mock">
+        <constructor-arg value="com.facishare.open.app.center.api.service.externals.AppViewBizService" />
+    </bean>
+
+</beans>
