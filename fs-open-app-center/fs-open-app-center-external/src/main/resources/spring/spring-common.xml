@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+	   http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+	   http://www.springframework.org/schema/context
+	   http://www.springframework.org/schema/context/spring-context-3.0.xsd
+       http://www.springframework.org/schema/aop
+	   http://www.springframework.org/schema/aop/spring-aop-3.1.xsd">
+    <import resource="classpath:spring/spring-cms.xml"/>
+
+    <context:annotation-config/>
+    <context:component-scan base-package="com.facishare.open.app.center.external"/>
+
+    <bean id="jedisSupport" class="com.github.jedis.support.JedisFactoryBean" p:configName="fs-open-app-center"/>
+
+    <!--Log Aop-->
+    <aop:config>
+        <aop:aspect id="logMonitor" ref="logAspect">
+            <aop:pointcut id="monitor" expression="execution(* com.facishare.open.app.center.external.service.impl..*.*(..))"/>
+            <aop:around pointcut-ref="monitor" method="around"/>
+        </aop:aspect>
+    </aop:config>
+    <bean id="logAspect" class="com.facishare.open.app.center.external.aop.LogAspect"/>
+
+    <import resource="classpath:spring/dubbo-consume.xml"/>
+    <import resource="classpath:spring/dubbo-provider.xml"/>
+    <bean class="com.fxiaoke.metrics.MetricsConfiguration"/>
+</beans>

@@ -1,0 +1,12 @@
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://code.alibabatech.com/schema/dubbo http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+
+    <dubbo:protocol id="dubbo" name="dubbo" port="28005"/>
+    <dubbo:provider timeout="6000" protocol="dubbo" />
+
+    <dubbo:service version="1.0" interface="com.facishare.open.app.center.api.service.QueryAppAdminService" ref="queryAppAdminServiceImpl"/>
+    <dubbo:service version="1.0" interface="com.facishare.open.app.center.api.service.externals.CustomerMsgBizService" ref="customerMsgBizServiceImpl"/>
+</beans>
